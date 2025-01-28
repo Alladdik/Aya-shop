@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Categories</h1>
+    
+    {% if categories %}
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            <p class="card-text">
+                                {% if category.products.count %}
+                                    {{ category.products.count }} product{{ category.products.count|pluralize }}
+                                {% else %}
+                                    No products yet
+                                {% endif %}
+                            </p>
+                            <a href="{% url 'category_detail' category.id %}" class="btn btn-primary">View Category</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No categories available.</p>
+    {% endif %}
+    
+    {% if user.is_staff %}
+        <div class="mt-4">
+            <a href="{% url 'add_category' %}" class="btn btn-success">Add New Category</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

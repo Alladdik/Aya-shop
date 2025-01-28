@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page - Aya Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --dark-blue: #1a237e;
+            --purple: #4a148c;
+            --light-purple: #7c43bd;
+            --gradient: linear-gradient(135deg, var(--dark-blue), var(--purple));
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        main {
+            flex: 1;
+            padding: 2rem 0;
+        }
+        .navbar {
+            background: var(--gradient);
+            box-shadow: var(--shadow);
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: 500;
+        }
+        .navbar-brand:hover, .nav-link:hover {
+            color: #ddd !important;
+        }
+        .btn-primary {
+            background-color: var(--purple);
+            border-color: var(--purple);
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: var(--light-purple);
+            border-color: var(--light-purple);
+        }
+        .card {
+            border: none;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+        footer {
+            background: var(--gradient);
+            color: white;
+            padding: 1.5rem 0;
+            margin-top: auto;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+        }
+        footer a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: white;
+        }
+        .dropdown-menu {
+            background-color: white;
+            border: none;
+            box-shadow: var(--shadow);
+        }
+        .dropdown-item {
+            color: var(--dark-blue) !important;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        .form-control {
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            padding: 0.5rem 1rem;
+        }
+        .btn-outline-light {
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--purple) !important;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .navbar-toggler {
+            border: none;
+        }
+        .navbar-toggler:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        .bg-dark-blue {
+            background-color: var(--dark-blue);
+        }
+        .text-dark-blue {
+            color: var(--dark-blue);
+        }
+        .shadow-sm {
+            box-shadow: var(--shadow);
+        }
+        .card-header {
+            border-bottom: none;
+        }
+        .list-group-item {
+            border: none;
+            padding: 0.75rem 1.25rem;
+        }
+        .list-group-item a {
+            color: var(--dark-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .list-group-item a:hover {
+            color: var(--light-purple);
+        }
+        .pagination .page-item.active .page-link {
+            background-color: var(--purple);
+            border-color: var(--purple);
+        }
+        .pagination .page-link {
+            color: var(--dark-blue);
+            border: 1px solid #ddd;
+            margin: 0 2px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .pagination .page-link:hover {
+            background-color: var(--light-purple);
+            color: white;
+            border-color: var(--light-purple);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}">Aya Shop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'add_product' %}">Add Product</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'add_category' %}">Add Category</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <form class="d-flex me-2" action="{% url 'search' %}" method="get">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
+                        <button class="btn btn-outline-light" type="submit">Search</button>
+                    </form>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{ user.username }}
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'cart' %}">Cart</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'purchases' %}">Purchases</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'register' %}">Register</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="row">
+            <!-- Categories Section -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark-blue text-white">
+                        <h2 class="h5 mb-0">Categories</h2>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for category in categories %}
+                            <li class="list-group-item">
+                                <a href="{% url 'category_detail' category.pk %}">{{ category.name }}</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No categories available</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark-blue text-white">
+                        <h2 class="h5 mb-0">Products</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for product in products %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                                        {% else %}
+                                            <div class="card-img-top bg-light text-center py-5">No Image</div>
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ product.name }}</h5>
+                                            <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                                            <p class="card-text"><strong>Price: ${{ product.price }}</strong></p>
+                                            <a href="{% url 'product_detail' product.pk %}" class="btn btn-primary">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="col-12">
+                                    <p>No products available</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if products.has_other_pages %}
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    {% if products.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for i in products.paginator.page_range %}
+                                        {% if products.number == i %}
+                                            <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if products.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>About Aya Shop</h5>
+                    <p>Aya Shop is your one-stop destination for all your shopping needs. We offer a wide range of products at competitive prices.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact Us</h5>
+                    <address>
+                        123 Shop Street<br>
+                        Cityville, ST 12345<br>
+                        <a href="mailto:info@ayashop.com">info@ayashop.com</a>
+                    </address>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>&copy; 2023 Aya Shop. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

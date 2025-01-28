@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Ваші покупки</h2>
+{% if purchases %}
+    <ul>
+    {% for purchase in purchases %}
+        <li>
+            {{ purchase.product.name }} - {{ purchase.purchased_at }}
+            <a href="{% url 'product_content' purchase.product.id %}">Переглянути контент</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>У вас ще немає покупок.</p>
+{% endif %}
+{% endblock %}
