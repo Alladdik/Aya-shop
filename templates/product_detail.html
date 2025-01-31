@@ -17,9 +17,20 @@
             <p class="h4">Price: ${{ product.price }}</p>
             <p>Added by: {{ product.author.username }}</p>
             
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="quantity">Quantity:</label>
+                        <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control" style="width: 100px;">
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Add to Cart</button>
+                </form>
+            {% endif %}
+            
             {% if user.is_authenticated and user == product.author or user.is_staff %}
-                <a href="{% url 'edit_product' product.pk %}" class="btn btn-primary">Edit</a>
-                <a href="{% url 'delete_product' product.pk %}" class="btn btn-danger">Delete</a>
+                <a href="{% url 'edit_product' product.pk %}" class="btn btn-primary mt-2">Edit</a>
+                <a href="{% url 'delete_product' product.pk %}" class="btn btn-danger mt-2">Delete</a>
             {% endif %}
         </div>
     </div>

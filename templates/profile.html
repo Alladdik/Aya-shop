@@ -9,10 +9,10 @@
             <p class="card-text"><strong>Ім'я:</strong> {{ user.first_name }}</p>
             <p class="card-text"><strong>Прізвище:</strong> {{ user.last_name }}</p>
             <p class="card-text"><strong>Електронна пошта:</strong> {{ user.email }}</p>
-            <p class="card-text"><strong>Баланс:</strong> {{ user.balance }} грн</p>
+            <p class="card-text"><strong>Баланс:</strong> {{ user.userprofile.balance }} грн</p>
             <div class="mt-3">
                 <a href="{% url 'edit_profile' %}" class="btn btn-primary">Редагувати профіль</a>
-                <a href="{% url 'add_funds' %}" class="btn btn-success">Поповнити баланс</a>
+                <a href="{% url 'add_balance' %}" class="btn btn-success">Поповнити баланс</a>
                 <a href="{% url 'cart' %}" class="btn btn-info">Мій кошик</a>
                 <a href="{% url 'logout' %}" class="btn btn-danger">Вийти</a>
             </div>

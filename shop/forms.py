@@ -42,6 +42,9 @@ class ProductForm(forms.ModelForm):
             raise forms.ValidationError("Price must be greater than 0")
         return price
 
+class AddBalanceForm(forms.Form):
+    amount = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.01)
+
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category

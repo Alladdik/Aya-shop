@@ -29,6 +29,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('accounts/profile/', views.profile, name='account_profile'),
+    path('add-balance/', views.add_balance, name='add_balance'),
 
     # Зміна пароля
     path('change-password/', auth_views.PasswordChangeView.as_view(

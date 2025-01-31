@@ -8,6 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Category, Product, Cart, CartItem, Order, OrderItem, Purchase
 from .forms import ProductForm, CategoryForm, UserProfileForm, AddToCartForm
 from decimal import Decimal
+from .forms import AddBalanceForm
 
 def register(request):
     if request.method == 'POST':
@@ -19,7 +20,7 @@ def register(request):
             return redirect('home')
     else:
         form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 def product_content(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -202,12 +203,25 @@ def search(request):
         'query': query
     }
     return render(request, 'search_results.html', context)
+@login_required
+def add_balance(request):
+    if request.method == 'POST':
+        form = AddBalanceForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data['amount']
+            request.user.balance += amount
+            request.user.save()
+            messages.success(request, f'Баланс успішно поповнено на {amount}!')
+            return redirect('profile')
+    else:
+        form = AddBalanceForm()
+    return render(request, 'add_balance.html', {'form': form})
 
 
 @login_required
 def cart(request):
     cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart_items = cart.cartitem_set.all()
+    cart_items = cart.items.all()  
     total = sum(item.product.price * item.quantity for item in cart_items)
     return render(request, 'cart.html', {'cart_items': cart_items, 'total': total})
 
@@ -225,7 +239,7 @@ def checkout(request):
     total = sum(item.product.price * item.quantity for item in cart_items)
 
     if request.method == 'POST':
-        if request.user.balance >= total:
+        if request.user.userprofile.balance >= total:
             order = Order.objects.create(user=request.user, total_amount=total)
             for cart_item in cart_items:
                 OrderItem.objects.create(
@@ -240,8 +254,8 @@ def checkout(request):
                     product=cart_item.product,
                     quantity=cart_item.quantity
                 )
-            request.user.balance -= total
-            request.user.save()
+            request.user.userprofile.balance -= total
+            request.user.userprofile.save()
             cart.cartitem_set.all().delete()
             messages.success(request, 'Your order has been placed successfully!')
             return redirect('order_confirmation', order_id=order.id)

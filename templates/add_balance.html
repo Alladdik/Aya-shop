@@ -1,10 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Поповнити баланс</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="number" name="amount" step="0.01" min="0" required>
-    <button type="submit">Поповнити</button>
-</form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Поповнити баланс</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="amount">Сума поповнення:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">₴</span>
+                                </div>
+                                <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Поповнити</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
