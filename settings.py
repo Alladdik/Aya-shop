@@ -22,7 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'shop',  # Ваш додаток
+    'shop',
+    'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -41,20 +43,20 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'templates',  # Глобальна директорія для шаблонів
-            BASE_DIR / 'shop' / 'templates',  # Директорія шаблонів додатку shop
+            BASE_DIR / 'templates',  
+            BASE_DIR / 'shop' / 'templates',  
         ],
-        'APP_DIRS': True,  # Дозволяє Django шукати шаблони в директоріях додатків
+        'APP_DIRS': True,  
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'shop.context_processors.categories',  # Додайте цей рядок для глобального доступу до категорій
+                'shop.context_processors.categories', 
             ],
             'libraries': {
-                'custom_filters': 'shop.templatetags.custom_filters',  # Додайте цей рядок для користувацьких фільтрів
+                'custom_filters': 'shop.templatetags.custom_filters',  
             },
         },
     },
@@ -111,3 +113,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication settings
 LOGIN_REDIRECT_URL = '/profile/'  # Перенаправлення після входу
 LOGOUT_REDIRECT_URL = '/'  # Перенаправлення після виходу
+
+# Custom User Model
+AUTH_USER_MODEL = 'shop.CustomUser'

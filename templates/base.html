@@ -178,9 +178,18 @@
     </main>
 
     <footer class="text-center text-lg-start">
-        <div class="container text-center py-3">
-            © {% now "Y" %} Aya Shop by Lentropix:
-            <a href="{% url 'home' %}">AyaShop.com</a>
+        <div class="container py-3">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">About Aya Shop</h5>
+                    <p>
+                        Aya Shop is your one-stop destination for all your shopping needs. We offer a wide range of products at competitive prices.
+                    </p>
+                </div>
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0 text-end">
+                    <p>© 2025 Aya Shop by Lentropix: <a href="{% url 'home' %}">AyaShop.com</a></p>
+                </div>
+            </div>
         </div>
     </footer>
 

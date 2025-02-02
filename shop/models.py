@@ -3,33 +3,10 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.text import slugify
 from django.db.models.signals import post_save
+from django.contrib.auth.models import AbstractUser
 from django.dispatch import receiver
 from decimal import Decimal
 from django.db.models import Sum, F
-
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
-    def __str__(self):
-        return self.user.username
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
-
-class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Cart for {self.user.username}"
 
 
 class Category(models.Model):
@@ -91,7 +68,25 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('shop:product_detail', args=[self.slug])
-
+    
+class CustomUser(AbstractUser):
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    groups = models.ManyToManyField(
+        'auth.Group',
+        verbose_name='groups',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        related_name='custom_user_set',
+        related_query_name='custom_user',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        verbose_name='user permissions',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_name='custom_user_set',
+        related_query_name='custom_user',
+    )
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -117,28 +112,30 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE) 
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True)  
 
     def __str__(self):
-        return f"Cart for {self.user.username}"
+        return f"Cart for {self.user.username}"  
 
     def get_total_cost(self):
-        return self.items.aggregate(
+        total_cost = self.items.aggregate(
             total_cost=Sum(F('product__price') * F('quantity'))
         )['total_cost'] or Decimal('0')
+        return total_cost
 
-6
+
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)  
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)  
+    quantity = models.PositiveIntegerField(default=1)  # Кількість товару в кошику
 
     def __str__(self):
-        return f"{self.quantity} of {self.product.name}"
+        return f"{self.quantity} of {self.product.name}"  # Рядкове представлення елемента кошика
 
     def get_cost(self):
+        # Розраховуємо вартість одного елемента кошика (ціна товару * кількість)
         return self.product.price * self.quantity
 
 

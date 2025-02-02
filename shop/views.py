@@ -235,11 +235,11 @@ def remove_from_cart(request, item_id):
 @login_required
 def checkout(request):
     cart, _ = Cart.objects.get_or_create(user=request.user)
-    cart_items = cart.cartitem_set.all()
-    total = sum(item.product.price * item.quantity for item in cart_items)
+    cart_items = cart.items.all()  
+    total = sum(item.get_cost() for item in cart_items)  # Розраховуємо загальну вартість
 
     if request.method == 'POST':
-        if request.user.userprofile.balance >= total:
+        if request.user.balance >= total:
             order = Order.objects.create(user=request.user, total_amount=total)
             for cart_item in cart_items:
                 OrderItem.objects.create(
@@ -248,19 +248,19 @@ def checkout(request):
                     quantity=cart_item.quantity,
                     price=cart_item.product.price
                 )
-                # Create Purchase objects
+                # Purchase об'єкти
                 Purchase.objects.create(
                     user=request.user,
                     product=cart_item.product,
                     quantity=cart_item.quantity
                 )
-            request.user.userprofile.balance -= total
-            request.user.userprofile.save()
-            cart.cartitem_set.all().delete()
-            messages.success(request, 'Your order has been placed successfully!')
+            request.user.balance -= total
+            request.user.save()
+            cart.items.all().delete()  
+            messages.success(request, 'Ваше замовлення успішно оформлено!')
             return redirect('order_confirmation', order_id=order.id)
         else:
-            messages.error(request, 'Insufficient balance. Please add funds to your account.')
+            messages.error(request, 'Недостатньо коштів на рахунку. Будь ласка, поповніть баланс.')
 
     return render(request, 'checkout.html', {'cart_items': cart_items, 'total': total})
 
